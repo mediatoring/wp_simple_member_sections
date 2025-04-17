@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Simple Member Sections – Webklient 1.0.0\n"
+"Language: en_GB\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/shortcodes.php:9
+msgid "Jste přihlášen jako"
+msgstr "You are logged in as"
+
+#: includes/shortcodes.php:17
+msgid "Odhlásit se"
+msgstr "Log out"
+
+#: templates/login-form.php:12
+msgid "E-mail"
+msgstr "E-mail"
+
+#: templates/login-form.php:15
+msgid "PIN (4 číslice)"
+msgstr "PIN (4 digits)"
+
+#: templates/login-form.php:18
+msgid "Přihlásit se"
+msgstr "Log in"
+
+#: includes/admin-page.php:19
+msgid "Správa kurzů a přístupů"
+msgstr "Courses & Access Management"
+
+#: includes/admin-page.php:23
+msgid "PIN"
+msgstr "PIN"
+
+#: includes/admin-page.php:23
+msgid "Přístup ke stránkám"
+msgstr "Page access"
+
+#: includes/admin-page.php:28
+msgid "Žádný přístup."
+msgstr "No access."
+
+#: includes/admin-page.php:33
+msgid "Zatím nejsou definováni žádní uživatelé."
+msgstr "No users defined yet."
+
+#: templates/user-portal.php:11
+msgid "Nemáte přiřazeny žádné stránky."
+msgstr "You have no assigned pages."
+
+#: templates/user-portal.php:14
+msgid "Vaše kurzy a obsah"
+msgstr "Your courses and content"
+
+#: auth.php:28
+msgid "Neplatný e-mail nebo PIN."
+msgstr "Invalid email or PIN." 

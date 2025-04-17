@@ -16,19 +16,19 @@ add_action('template_redirect', function () {
 
     $current_path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
-    // Povolení veřejného přístupu mimo /portal/
-    if (stripos($current_path, 'portal') !== 0) {
+    // Povolení veřejného přístupu mimo /portal/ nebo pro hlavní stránky portal a portal/list
+    if (stripos($current_path, 'portal') !== 0 || $current_path === 'portal' || $current_path === 'portal/list') {
         return;
     }
 
     // Kontrola přihlášení a přístupových práv
     if (!isset($_SESSION['smsw_user']) || !is_array($_SESSION['smsw_user'])) {
-        include SMSW_PLUGIN_DIR . 'templates/login-form.php';
+        wp_redirect(home_url('/portal/'));
         exit;
     }
 
     if (empty($_SESSION['smsw_user']['access_pages'])) {
-        include SMSW_PLUGIN_DIR . 'templates/login-form.php';
+        wp_redirect(home_url('/portal/'));
         exit;
     }
 
@@ -41,7 +41,7 @@ add_action('template_redirect', function () {
     }
 
     if (!$allowed) {
-        include SMSW_PLUGIN_DIR . 'templates/login-form.php';
+        wp_redirect(home_url('/portal/list/'));
         exit;
     }
 });

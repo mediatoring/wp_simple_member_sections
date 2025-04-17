@@ -14,14 +14,20 @@ if (!empty($_SESSION['smsw_login_error'])) {
     unset($_SESSION['smsw_login_error']);
 }
 
-// Jazykový přepínač
+// Získání aktuální URL bez parametru lang
 $current_url = remove_query_arg('lang', $_SERVER['REQUEST_URI']);
+if (empty($current_url)) {
+    $current_url = '/';
+}
+
+// Jazykový přepínač
 echo '<div class="smsw-lang-switcher">';
 foreach (SMSW_SUPPORTED_LANGUAGES as $lang_code => $lang) {
     $active_class = ($_SESSION['smsw_lang'] === $lang_code) ? 'active' : '';
+    $lang_url = add_query_arg('lang', $lang_code, $current_url);
     echo sprintf(
         '<a href="%s" class="%s" title="%s">%s %s</a>',
-        esc_url(add_query_arg('lang', $lang_code, $current_url)),
+        esc_url($lang_url),
         esc_attr($active_class),
         esc_attr($lang['name']),
         esc_html($lang['flag']),

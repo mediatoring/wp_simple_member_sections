@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Simple Member Sections – Webklient 1.0.0\n"
+"Language: cs_CZ\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/shortcodes.php:9
+msgid "Jste přihlášen jako"
+msgstr "Jste přihlášen jako"
+
+#: includes/shortcodes.php:17
+msgid "Odhlásit se"
+msgstr "Odhlásit se"
+
+#: templates/login-form.php:12
+msgid "E-mail"
+msgstr "E-mail"
+
+#: templates/login-form.php:15
+msgid "PIN (4 číslice)"
+msgstr "PIN (4 číslice)"
+
+#: templates/login-form.php:18
+msgid "Přihlásit se"
+msgstr "Přihlásit se"
+
+#: includes/admin-page.php:19
+msgid "Správa kurzů a přístupů"
+msgstr "Správa kurzů a přístupů"
+
+#: includes/admin-page.php:23
+msgid "PIN"
+msgstr "PIN"
+
+#: includes/admin-page.php:23
+msgid "Přístup ke stránkám"
+msgstr "Přístup ke stránkám"
+
+#: includes/admin-page.php:28
+msgid "Žádný přístup."
+msgstr "Žádný přístup."
+
+#: includes/admin-page.php:33
+msgid "Zatím nejsou definováni žádní uživatelé."
+msgstr "Zatím nejsou definováni žádní uživatelé."
+
+#: templates/user-portal.php:11
+msgid "Nemáte přiřazeny žádné stránky."
+msgstr "Nemáte přiřazeny žádné stránky."
+
+#: templates/user-portal.php:14
+msgid "Vaše kurzy a obsah"
+msgstr "Vaše kurzy a obsah"
+
+#: auth.php:28
+msgid "Neplatný e-mail nebo PIN."
+msgstr "Neplatný e-mail nebo PIN."

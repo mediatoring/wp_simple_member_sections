@@ -30,6 +30,69 @@ add_action('admin_menu', function () {
     );
 });
 
+// Zpracování formuláře pro správu uživatelů
+function smsw_process_user_form() {
+    if (!isset($_POST['smsw_user_action']) || !check_admin_referer('smsw_user_management')) {
+        return;
+    }
+
+    $users = get_option('smsw_users', []);
+    if (!is_array($users)) {
+        $users = [];
+    }
+
+    $action = $_POST['smsw_user_action'];
+    $email = isset($_POST['smsw_email']) ? sanitize_email($_POST['smsw_email']) : '';
+    $pin = isset($_POST['smsw_pin']) ? sanitize_text_field($_POST['smsw_pin']) : '';
+    $access_pages = isset($_POST['smsw_access_pages']) ? (array)$_POST['smsw_access_pages'] : [];
+
+    switch ($action) {
+        case 'add':
+            if (empty($email) || empty($pin)) {
+                add_settings_error('smsw_users', 'invalid_input', __('E-mail a PIN jsou povinné.', 'smsw'));
+                return;
+            }
+
+            // Kontrola duplicity e-mailu
+            foreach ($users as $user) {
+                if ($user['email'] === $email) {
+                    add_settings_error('smsw_users', 'duplicate_email', __('Uživatel s tímto e-mailem již existuje.', 'smsw'));
+                    return;
+                }
+            }
+
+            $users[] = [
+                'email' => $email,
+                'pin' => $pin,
+                'access_pages' => $access_pages
+            ];
+            break;
+
+        case 'edit':
+            $user_index = isset($_POST['smsw_user_index']) ? absint($_POST['smsw_user_index']) : -1;
+            if ($user_index < 0 || !isset($users[$user_index])) {
+                add_settings_error('smsw_users', 'invalid_user', __('Neplatný uživatel.', 'smsw'));
+                return;
+            }
+
+            if (!empty($pin)) {
+                $users[$user_index]['pin'] = $pin;
+            }
+            $users[$user_index]['access_pages'] = $access_pages;
+            break;
+
+        case 'delete':
+            $user_index = isset($_POST['smsw_user_index']) ? absint($_POST['smsw_user_index']) : -1;
+            if ($user_index >= 0 && isset($users[$user_index])) {
+                array_splice($users, $user_index, 1);
+            }
+            break;
+    }
+
+    update_option('smsw_users', $users);
+    add_settings_error('smsw_users', 'success', __('Změny byly uloženy.', 'smsw'), 'updated');
+}
+
 // Stránka s nastavením
 function smsw_render_settings_page() {
     if (!current_user_can('manage_options')) {
@@ -147,10 +210,28 @@ function smsw_render_settings_page() {
     echo '</div>';
 }
 
-// Původní funkce pro zobrazení stránky s kurzy
+// Hlavní administrační stránka
 function smsw_render_admin_page() {
     if (!current_user_can('manage_options')) {
         wp_die(__('Nemáte oprávnění k přístupu na tuto stránku.', 'smsw'));
+    }
+
+    // Zpracování formuláře pro správu uživatelů
+    smsw_process_user_form();
+
+    // Získání seznamu stránek pro výběr přístupových práv
+    $all_pages = get_pages([
+        'sort_column' => 'menu_order',
+        'sort_order' => 'ASC'
+    ]);
+
+    // Filtrování pouze stránek pod /portal/
+    $pages = [];
+    foreach ($all_pages as $page) {
+        $page_path = get_page_uri($page->ID);
+        if (strpos($page_path, 'portal/') === 0 && $page_path !== 'portal/list') {
+            $pages[] = $page;
+        }
     }
 
     $users = get_option('smsw_users', []);
@@ -161,32 +242,113 @@ function smsw_render_admin_page() {
     echo '<div class="wrap">';
     echo '<h1>' . esc_html__('Správa kurzů a přístupů', 'smsw') . '</h1>';
 
+    // Formulář pro přidání nového uživatele
+    echo '<div class="card">';
+    echo '<h2>' . esc_html__('Přidat nového uživatele', 'smsw') . '</h2>';
+    echo '<form method="post" action="">';
+    wp_nonce_field('smsw_user_management');
+    echo '<input type="hidden" name="smsw_user_action" value="add">';
+    
+    echo '<table class="form-table">';
+    echo '<tr>';
+    echo '<th scope="row"><label for="smsw_new_email">' . __('E-mail', 'smsw') . '</label></th>';
+    echo '<td><input type="email" name="smsw_email" id="smsw_new_email" class="regular-text" required></td>';
+    echo '</tr>';
+    
+    echo '<tr>';
+    echo '<th scope="row"><label for="smsw_new_pin">' . __('PIN', 'smsw') . '</label></th>';
+    echo '<td><input type="text" name="smsw_pin" id="smsw_new_pin" pattern="\d{4}" class="regular-text" required></td>';
+    echo '</tr>';
+    
+    echo '<tr>';
+    echo '<th scope="row">' . __('Přístup ke stránkám', 'smsw') . '</th>';
+    echo '<td>';
+    if (!empty($pages)) {
+        echo '<div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">';
+        foreach ($pages as $page) {
+            $page_path = get_page_uri($page->ID);
+            echo sprintf(
+                '<label style="display: block; margin-bottom: 5px;"><input type="checkbox" name="smsw_access_pages[]" value="%s"> %s</label>',
+                esc_attr($page_path),
+                esc_html($page->post_title)
+            );
+        }
+        echo '</div>';
+    } else {
+        echo '<p class="description">' . __('Nejsou k dispozici žádné stránky pod cestou /portal/.', 'smsw') . '</p>';
+    }
+    echo '</td>';
+    echo '</tr>';
+    echo '</table>';
+    
+    submit_button(__('Přidat uživatele', 'smsw'), 'primary');
+    echo '</form>';
+    echo '</div>';
+
+    // Seznam uživatelů v metaboxu
+    echo '<div class="metabox-holder" style="margin-top: 20px;">';
+    echo '<div class="postbox" style="width: 100%;">';
+    echo '<h2 class="hndle" style="padding: 10px 15px; margin: 0; border-bottom: 1px solid #ddd;">';
+    echo '<span>' . esc_html__('Seznam uživatelů', 'smsw') . '</span>';
+    echo '</h2>';
+    echo '<div class="inside" style="padding: 15px;">';
+
     if (!empty($users)) {
-        echo '<table class="widefat fixed striped">';
+        echo '<table class="wp-list-table widefat fixed striped" style="width: 100%;">';
         echo '<thead><tr>';
-        echo '<th>' . esc_html__('E-mail', 'smsw') . '</th>';
-        echo '<th>' . esc_html__('PIN', 'smsw') . '</th>';
-        echo '<th>' . esc_html__('Přístup ke stránkám', 'smsw') . '</th>';
+        echo '<th style="width: 25%;">' . __('E-mail', 'smsw') . '</th>';
+        echo '<th style="width: 15%;">' . __('PIN', 'smsw') . '</th>';
+        echo '<th style="width: 40%;">' . __('Přístup ke stránkám', 'smsw') . '</th>';
+        echo '<th style="width: 20%;">' . __('Akce', 'smsw') . '</th>';
         echo '</tr></thead><tbody>';
 
-        foreach ($users as $user) {
-            if (!is_array($user)) {
-                continue;
-            }
-
+        foreach ($users as $index => $user) {
             echo '<tr>';
-            echo '<td>' . esc_html($user['email'] ?? '') . '</td>';
-            echo '<td>' . esc_html($user['pin'] ?? '') . '</td>';
+            echo '<td>' . esc_html($user['email']) . '</td>';
+            echo '<td>' . esc_html($user['pin']) . '</td>';
             echo '<td>';
-
-            if (!empty($user['access_pages']) && is_array($user['access_pages'])) {
-                foreach ($user['access_pages'] as $slug) {
-                    echo '<div><code>' . esc_html($slug) . '</code></div>';
+            if (!empty($user['access_pages'])) {
+                foreach ($user['access_pages'] as $page_path) {
+                    $page = get_page_by_path($page_path);
+                    if ($page) {
+                        echo '<div><code>' . esc_html($page->post_title) . '</code></div>';
+                    } else {
+                        echo '<div><code>' . esc_html($page_path) . '</code> <em>(' . __('stránka nenalezena', 'smsw') . ')</em></div>';
+                    }
                 }
             } else {
-                echo '<em>' . esc_html__('Žádný přístup.', 'smsw') . '</em>';
+                echo '<em>' . __('Žádný přístup', 'smsw') . '</em>';
             }
+            echo '</td>';
+            echo '<td>';
+            echo '<form method="post" action="" style="display: inline;">';
+            wp_nonce_field('smsw_user_management');
+            echo '<input type="hidden" name="smsw_user_action" value="edit">';
+            echo '<input type="hidden" name="smsw_user_index" value="' . esc_attr($index) . '">';
+            
+            if (!empty($pages)) {
+                echo '<div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">';
+                foreach ($pages as $page) {
+                    $page_path = get_page_uri($page->ID);
+                    $checked = in_array($page_path, $user['access_pages'] ?? []) ? ' checked' : '';
+                    echo sprintf(
+                        '<label style="display: block; margin-bottom: 5px;"><input type="checkbox" name="smsw_access_pages[]" value="%s"%s> %s</label>',
+                        esc_attr($page_path),
+                        $checked,
+                        esc_html($page->post_title)
+                    );
+                }
+                echo '</div>';
+            }
+            submit_button(__('Upravit přístup', 'smsw'), 'small');
+            echo '</form>';
 
+            echo '<form method="post" action="" style="display: inline;">';
+            wp_nonce_field('smsw_user_management');
+            echo '<input type="hidden" name="smsw_user_action" value="delete">';
+            echo '<input type="hidden" name="smsw_user_index" value="' . esc_attr($index) . '">';
+            submit_button(__('Smazat', 'smsw'), 'small delete');
+            echo '</form>';
             echo '</td>';
             echo '</tr>';
         }
@@ -196,5 +358,8 @@ function smsw_render_admin_page() {
         echo '<p>' . esc_html__('Zatím nejsou definováni žádní uživatelé.', 'smsw') . '</p>';
     }
 
-    echo '</div>';
+    echo '</div>'; // .inside
+    echo '</div>'; // .postbox
+    echo '</div>'; // .metabox-holder
+    echo '</div>'; // .wrap
 }
