@@ -1,0 +1,120 @@
+/* Reset formulářových prvků */
+.smsw-login-form input,
+.smsw-login-form button,
+.smsw-login-form select,
+.smsw-login-form textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Hlavní styly formuláře */
+.smsw-login-form {
+    max-width: 360px;
+    margin: 2em auto;
+    padding: 2em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fdfdfd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.smsw-login-form h2 {
+    text-align: center;
+    margin-bottom: 1.5em;
+}
+
+.smsw-login-form label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.smsw-login-form input[type="email"],
+.smsw-login-form input[type="text"],
+.smsw-login-form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+    padding: 0.7em;
+    font-size: 1rem;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+.smsw-login-form button {
+    background: #0073aa;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.smsw-login-form button:hover {
+    background: #005f8d;
+}
+
+/* Chybové hlášky */
+.smsw-error {
+    color: #b00;
+    background: #fdd;
+    padding: 0.5em;
+    border: 1px solid #c99;
+    border-radius: 4px;
+    margin-bottom: 1em;
+}
+
+/* Jazykový přepínač */
+.smsw-lang-switcher {
+    text-align: right;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.smsw-lang-switcher a {
+    display: inline-block;
+    padding: 0.3em 0.6em;
+    margin: 0 0.3em;
+    text-decoration: none;
+    color: #333;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.smsw-lang-switcher a:hover {
+    background: #e0e0e0;
+}
+
+.smsw-lang-switcher a.active {
+    background: #0073aa;
+    color: #fff;
+}
+
+/* Seznam kurzů */
+.smsw-course-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.smsw-course-list li {
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.smsw-course-list li a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.smsw-course-list li a:hover {
+    text-decoration: underline;
+}
+  

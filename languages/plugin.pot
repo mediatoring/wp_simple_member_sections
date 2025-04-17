@@ -1,0 +1,63 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Simple Member Sections – Webklient\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: manual\n"
+
+#: includes/shortcodes.php:9
+msgid "Jste přihlášen jako"
+msgstr ""
+
+#: includes/shortcodes.php:17
+msgid "Odhlásit se"
+msgstr ""
+
+#: templates/login-form.php:12
+msgid "E-mail"
+msgstr ""
+
+#: templates/login-form.php:15
+msgid "PIN (4 číslice)"
+msgstr ""
+
+#: templates/login-form.php:18
+msgid "Přihlásit se"
+msgstr ""
+
+#: includes/admin-page.php:19
+msgid "Správa kurzů a přístupů"
+msgstr ""
+
+#: includes/admin-page.php:23
+msgid "E-mail"
+msgstr ""
+
+#: includes/admin-page.php:23
+msgid "PIN"
+msgstr ""
+
+#: includes/admin-page.php:23
+msgid "Přístup ke stránkám"
+msgstr ""
+
+#: includes/admin-page.php:28
+msgid "Žádný přístup."
+msgstr ""
+
+#: includes/admin-page.php:33
+msgid "Zatím nejsou definováni žádní uživatelé."
+msgstr ""
+
+#: templates/user-portal.php:11
+msgid "Nemáte přiřazeny žádné stránky."
+msgstr ""
+
+#: templates/user-portal.php:14
+msgid "Vaše kurzy a obsah"
+msgstr ""
+
+#: auth.php:28
+msgid "Neplatný e-mail nebo PIN."
+msgstr ""
