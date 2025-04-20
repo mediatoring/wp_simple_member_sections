@@ -17,7 +17,12 @@ define('SMSW_SUPPORTED_LANGUAGES', [
     ],
     'en_US' => [
         'code' => 'en_US',
-        'name' => 'English',
+        'name' => 'English (US)',
+        'flag' => '🇺🇸'
+    ],
+    'en_GB' => [
+        'code' => 'en_GB',
+        'name' => 'English (UK)',
         'flag' => '🇬🇧'
     ],
     'it_IT' => [
@@ -40,7 +45,8 @@ $default_config = [
     'enable_cookies' => true,
     'remember_me' => true,
     'custom_css' => '',
-    'custom_js' => ''
+    'custom_js' => '',
+    'portal_page_id' => 75,
 ];
 
 // Načtení uložené konfigurace
@@ -57,6 +63,7 @@ define('SMSW_MAX_LOGIN_ATTEMPTS', $config['max_login_attempts']);
 define('SMSW_LOCKOUT_TIME', $config['lockout_time']);
 define('SMSW_ENABLE_COOKIES', $config['enable_cookies']);
 define('SMSW_REMEMBER_ME', $config['remember_me']);
+define('SMSW_PORTAL_PAGE_ID', absint($config['portal_page_id']));
 
 // Funkce pro získání konfigurace
 function smsw_get_config($key = null) {
@@ -85,6 +92,7 @@ function smsw_save_config($new_config) {
                 case 'session_lifetime':
                 case 'max_login_attempts':
                 case 'lockout_time':
+                case 'portal_page_id':
                     $sanitized_config[$key] = absint($new_config[$key]);
                     break;
                 case 'enable_cookies':

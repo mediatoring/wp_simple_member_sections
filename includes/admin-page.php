@@ -112,7 +112,8 @@ function smsw_render_settings_page() {
             'enable_cookies' => isset($_POST['enable_cookies']),
             'remember_me' => isset($_POST['remember_me']),
             'custom_css' => $_POST['custom_css'] ?? '',
-            'custom_js' => $_POST['custom_js'] ?? ''
+            'custom_js' => $_POST['custom_js'] ?? '',
+            'portal_page_id' => isset($_POST['portal_page_id']) ? absint($_POST['portal_page_id']) : 0
         ];
 
         smsw_save_config($new_config);
@@ -130,21 +131,23 @@ function smsw_render_settings_page() {
     echo '<table class="form-table">';
     
     // Výchozí jazyk
-    echo '<tr>';
-    echo '<th scope="row"><label for="default_language">' . __('Výchozí jazyk', 'smsw') . '</label></th>';
-    echo '<td><select name="default_language" id="default_language">';
-    foreach (SMSW_SUPPORTED_LANGUAGES as $code => $lang) {
-        $selected = selected($config['default_language'], $code, false);
-        echo sprintf(
-            '<option value="%s" %s>%s %s</option>',
-            esc_attr($code),
-            $selected,
-            esc_html($lang['flag']),
-            esc_html($lang['name'])
-        );
+    if (false) {
+        echo '<tr>';
+        echo '<th scope="row"><label for="default_language">' . __('Výchozí jazyk', 'smsw') . '</label></th>';
+        echo '<td><select name="default_language" id="default_language">';
+        foreach (SMSW_SUPPORTED_LANGUAGES as $code => $lang) {
+            $selected = selected($config['default_language'], $code, false);
+            echo sprintf(
+                '<option value="%s" %s>%s %s</option>',
+                esc_attr($code),
+                $selected,
+                esc_html($lang['flag']),
+                esc_html($lang['name'])
+            );
+        }
+        echo '</select></td>';
+        echo '</tr>';
     }
-    echo '</select></td>';
-    echo '</tr>';
     
     // Stránka přihlášení
     echo '<tr>';
@@ -156,6 +159,12 @@ function smsw_render_settings_page() {
     echo '<tr>';
     echo '<th scope="row"><label for="list_page">' . __('Stránka se seznamem', 'smsw') . '</label></th>';
     echo '<td><input type="text" name="list_page" id="list_page" value="' . esc_attr($config['list_page']) . '" class="regular-text"></td>';
+    echo '</tr>';
+    
+    // ID stránky portálu
+    echo '<tr>';
+    echo '<th scope="row"><label for="portal_page_id">' . __('ID stránky portálu', 'smsw') . '</label></th>';
+    echo '<td><input type="number" name="portal_page_id" id="portal_page_id" value="' . esc_attr($config['portal_page_id']) . '" class="small-text" min="1"></td>';
     echo '</tr>';
     
     // Délka PIN kódu
@@ -242,8 +251,11 @@ function smsw_render_admin_page() {
     echo '<div class="wrap">';
     echo '<h1>' . esc_html__('Správa kurzů a přístupů', 'smsw') . '</h1>';
 
+    // Container for Add User and Add Course cards
+    echo '<div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">';
+
     // Formulář pro přidání nového uživatele
-    echo '<div class="card">';
+    echo '<div class="card" style="flex:1;">';
     echo '<h2>' . esc_html__('Přidat nového uživatele', 'smsw') . '</h2>';
     echo '<form method="post" action="">';
     wp_nonce_field('smsw_user_management');
@@ -284,6 +296,14 @@ function smsw_render_admin_page() {
     submit_button(__('Přidat uživatele', 'smsw'), 'primary');
     echo '</form>';
     echo '</div>';
+
+    // Card for adding new course
+    echo '<div class="card" style="flex:1;">';
+    echo '<h2>' . esc_html__('Přidat nový kurz', 'smsw') . '</h2>';
+    echo '<a href="' . esc_url(admin_url('post-new.php?post_type=page&post_parent=' . SMSW_PORTAL_PAGE_ID)) . '" class="button button-primary">' . esc_html__('Přidat nový kurz', 'smsw') . '</a>';
+    echo '</div>';
+
+    echo '</div>'; // end of two-column container
 
     // Seznam uživatelů v metaboxu
     echo '<div class="metabox-holder" style="margin-top: 20px;">';

@@ -20,21 +20,23 @@ if (empty($current_url)) {
     $current_url = '/';
 }
 
-// Jazykový přepínač
-echo '<div class="smsw-lang-switcher">';
-foreach (SMSW_SUPPORTED_LANGUAGES as $lang_code => $lang) {
-    $active_class = ($_SESSION['smsw_lang'] === $lang_code) ? 'active' : '';
-    $lang_url = add_query_arg('lang', $lang_code, $current_url);
-    echo sprintf(
-        '<a href="%s" class="%s" title="%s">%s %s</a>',
-        esc_url($lang_url),
-        esc_attr($active_class),
-        esc_attr($lang['name']),
-        esc_html($lang['flag']),
-        esc_html($lang['name'])
-    );
+// Language switcher (temporarily hidden)
+if (false) {
+    echo '<div class="smsw-lang-switcher">';
+    foreach (SMSW_SUPPORTED_LANGUAGES as $lang_code => $lang) {
+        $active_class = ($_SESSION['smsw_lang'] === $lang_code) ? 'active' : '';
+        $lang_url = add_query_arg('lang', $lang_code, $current_url);
+        echo sprintf(
+            '<a href="%s" class="%s" title="%s">%s %s</a>',
+            esc_url($lang_url),
+            esc_attr($active_class),
+            esc_attr($lang['name']),
+            esc_html($lang['flag']),
+            esc_html($lang['name'])
+        );
+    }
+    echo '</div>';
 }
-echo '</div>';
 
 echo $error;
 ?>
